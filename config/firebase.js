@@ -12,21 +12,19 @@
 
 const admin = require('firebase-admin');
 
-// Lấy chuỗi JSON từ biến môi trường mà Huy vừa dán lên Vercel
+// Đọc chuỗi JSON từ biến môi trường
 const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
 
-if (serviceAccountRaw) {
-    try {
-        // Parse cái chuỗi đó thành Object
-        const serviceAccount = JSON.parse(serviceAccountRaw);
-
-        if (!admin.apps.length) {
-            admin.initializeApp({
-                credential: admin.credential.cert(serviceAccount)
-            });
-            console.log("Firebase Admin đã kết nối thành công!");
-        }
-    } catch (error) {
-        console.error("Lỗi khi parse JSON Firebase:", error);
-    }
+try {
+  const serviceAccount = JSON.parse(serviceAccountRaw);
+  
+  if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log("Firebase Admin đã khởi tạo thành công!");
+  }
+} catch (error) {
+  console.error("Lỗi cấu hình Firebase:", error.message);
+  // Nếu lỗi ở đây, server sẽ không thể verify bất kỳ token nào -> trả về 401
 }
