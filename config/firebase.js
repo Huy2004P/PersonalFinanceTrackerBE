@@ -11,22 +11,19 @@
 // module.exports = { db, auth, admin };
 
 const admin = require('firebase-admin');
+const path = require('path');
 
-// Đọc chuỗi JSON từ biến môi trường
-const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
+// Trỏ thẳng vào file JSON vật lý
+const serviceAccountPath = './config/serviceAccountKey.json';
 
-try {
-  const serviceAccount = JSON.parse(serviceAccountRaw);
-  
-  // DÒNG QUAN TRỌNG NHẤT: Ép kiểu lại ký tự xuống dòng cho Private Key
-  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
-
-  if (!admin.apps.length) {
+if (!admin.apps.length) {
+  try {
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
+      // Truyền đường dẫn file vào đây
+      credential: admin.credential.cert(serviceAccountPath)
     });
+    console.log("Firebase Admin: Đã kết nối bằng file JSON vật lý thành công!");
+  } catch (error) {
+    console.error("Lỗi khởi tạo Firebase:", error.message);
   }
-  console.log("Firebase đã nhận chìa khóa xịn!");
-} catch (error) {
-  console.error("Lỗi cấu hình Firebase:", error);
 }
