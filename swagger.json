@@ -1,0 +1,94 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "LumiFinance API Documentation",
+    "version": "1.0.0",
+    "description": "Tài liệu API đầy đủ cho LumiFinance - Hỗ trợ User, Transactions, Categories, Budgets, Wallets và Notifications"
+  },
+  "servers": [
+    { "url": "http://localhost:3000", "description": "LumiFinance Backend Server" },
+    { "url": "https://identitytoolkit.googleapis.com/v1", "description": "Firebase Auth API Server" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    }
+  },
+  "paths": {
+    "/accounts:signUp?key=[API_KEY]": {
+      "post": { "tags": ["Firebase Auth"], "summary": "1. Đăng ký (Sign Up)", "responses": { "200": { "description": "Thành công" } } }
+    },
+    "/accounts:signInWithPassword?key=[API_KEY]": {
+      "post": { "tags": ["Firebase Auth"], "summary": "2. Đăng nhập (Sign In)", "responses": { "200": { "description": "Thành công" } } }
+    },
+    "/accounts:sendOobCode?key=[API_KEY]": {
+      "post": { "tags": ["Firebase Auth"], "summary": "3. Quên mật khẩu (Password Reset)", "responses": { "200": { "description": "Đã gửi mail" } } }
+    },
+    "/api/auth/me": {
+      "get": { "tags": ["User"], "summary": "4. Lấy thông tin User hiện tại", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "OK" } } }
+    },
+    "/api/users/profile": {
+      "get": { "tags": ["User"], "summary": "5. Lấy hồ sơ chi tiết", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "OK" } } },
+      "post": { "tags": ["User"], "summary": "6. Tạo hồ sơ người dùng mới", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Created" } } },
+      "put": { "tags": ["User"], "summary": "7. Cập nhật hồ sơ người dùng", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Updated" } } }
+    },
+    "/api/users/fcm-token": {
+      "post": { "tags": ["User"], "summary": "8. Cập nhật FCM Token cho thông báo", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "OK" } } }
+    },
+    "/api/users/password": {
+      "put": { "tags": ["User"], "summary": "9. Đổi mật khẩu", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Changed" } } }
+    },
+    "/api/logout": {
+      "post": { "tags": ["User"], "summary": "10. Đăng xuất", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Logged out" } } }
+    },
+    "/api/categories": {
+      "get": { "tags": ["Categories"], "summary": "11. Lấy danh sách danh mục", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "OK" } } },
+      "post": { "tags": ["Categories"], "summary": "12. Thêm danh mục mới", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Created" } } }
+    },
+    "/api/categories/{id}": {
+      "delete": {
+        "tags": ["Categories"], "summary": "13. Xóa danh mục", "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Deleted" } }
+      }
+    },
+    "/api/upload": {
+      "post": {
+        "tags": ["Transactions"], "summary": "14. Upload ảnh lên Cloudinary", "security": [{ "bearerAuth": [] }],
+        "requestBody": { "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "image": { "type": "string", "format": "binary" } } } } } },
+        "responses": { "200": { "description": "Trả về link ảnh" } }
+      }
+    },
+    "/api/transactions": {
+      "get": { "tags": ["Transactions"], "summary": "15. Lấy danh sách giao dịch", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "OK" } } },
+      "post": { "tags": ["Transactions"], "summary": "16. Thêm giao dịch mới", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Created" } } }
+    },
+    "/api/transactions/export-pdf": {
+      "get": { "tags": ["Transactions"], "summary": "17. Xuất báo cáo PDF", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "File PDF" } } }
+    },
+    "/api/transactions/{id}": {
+      "get": { "tags": ["Transactions"], "summary": "18. Chi tiết giao dịch", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } },
+      "delete": { "tags": ["Transactions"], "summary": "19. Xóa giao dịch", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "Deleted" } } }
+    },
+    "/api/stats": {
+      "get": { "tags": ["Transactions"], "summary": "20. Thống kê số dư & biểu đồ", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "OK" } } }
+    },
+    "/api/budgets": {
+      "get": { "tags": ["Budgets"], "summary": "21. Danh sách ngân sách", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "OK" } } },
+      "post": { "tags": ["Budgets"], "summary": "22. Thiết lập ngân sách", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Created" } } }
+    },
+    "/api/budgets/{id}": {
+      "delete": { "tags": ["Budgets"], "summary": "23. Xóa ngân sách", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "Deleted" } } }
+    },
+    "/api/wallets": {
+      "get": { "tags": ["Wallets"], "summary": "24. Lấy danh sách ví", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "OK" } } },
+      "post": { "tags": ["Wallets"], "summary": "25. Tạo ví mới", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Created" } } }
+    },
+    "/api/wallets/transfer": {
+      "post": { "tags": ["Wallets"], "summary": "26. Chuyển tiền giữa các ví", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Thành công" } } }
+    },
+    "/api/notifications": {
+      "get": { "tags": ["Notifications"], "summary": "27. Lấy danh sách thông báo", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "OK" } } }
+    }
+  }
+}

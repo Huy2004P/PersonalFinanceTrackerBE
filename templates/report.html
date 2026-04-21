@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* SỬ DỤNG MÀU SẮC TỪ apple_design.dart */
+        :root {
+            --pure-white: #FFFFFF;
+            --light-gray: #F5F5F7;
+            --near-black: #1D1D1F;
+            --apple-blue: #0071E3;
+            --bright-blue: #0066CC;
+            --system-red: #FF3B30;
+            --system-green: #34C759;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--light-gray); /* */
+            color: var(--near-black); /* */
+            padding: 24px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* HEADER STYLE */
+        .header {
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+        .brand {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--bright-blue);
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+        .report-type {
+            font-size: 14px;
+            color: #86868b;
+            font-weight: 500;
+        }
+
+        /* CARD TỔNG KẾT (Style giống Balance Card trong Home) */
+        .hero-card {
+            background: linear-gradient(135deg, #1459B3 0%, #1C7AD6 100%);
+            border-radius: 28px;
+            padding: 28px;
+            color: var(--pure-white);
+            box-shadow: 0 12px 24px rgba(20, 89, 179, 0.2);
+            margin-bottom: 32px;
+        }
+        .hero-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .hero-value {
+            font-size: 36px; /* Sấp sỉ displayHero */
+            font-weight: 700;
+            margin-top: 8px;
+            letter-spacing: -1px;
+        }
+        .hero-footer {
+            margin-top: 24px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 16px;
+        }
+
+        /* SECTION TITLE */
+        .section-title {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+
+        /* TRANSACTION LIST (Dạng thẻ Mobile) */
+        .transaction-item {
+            background-color: var(--pure-white); /* */
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+        .trans-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .trans-category {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .trans-date-note {
+            font-size: 13px;
+            color: #86868b;
+        }
+        .trans-amount {
+            font-size: 17px; /* body style */
+            font-weight: 700;
+            text-align: right;
+        }
+
+        /* MÀU SẮC TRẠNG THÁI */
+        .expense { color: var(--system-red); }
+        .income { color: var(--system-green); }
+
+        .footer { 
+            margin-top: 40px; 
+            text-align: center; 
+            font-size: 12px; 
+            color: #86868b; 
+            padding-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="brand">LumiFinance</div>
+        <div class="report-type">BÁO CÁO GIAO DỊCH CHI TIẾT</div>
+    </div>
+
+    <div class="hero-card">
+        <div class="hero-label">Tổng chi tiêu tháng này</div>
+        <div class="hero-value">{{totalExpense}}₫</div>
+        <div class="hero-footer">
+            <span>Khách hàng: {{userName}}</span>
+            <span>{{exportDate}}</span>
+        </div>
+    </div>
+
+    <div class="section-title">Lịch sử giao dịch</div>
+
+    <div class="transactions-container">
+        {{#each transactions}}
+        <div class="transaction-item">
+            <div class="trans-info">
+                <div class="trans-category">{{this.categoryName}}</div>
+                <div class="trans-date-note">
+                    {{this.formattedDate}} • {{#if this.note}}{{this.note}}{{else}}Không có ghi chú{{/if}}
+                </div>
+            </div>
+            <div class="trans-amount {{#if (isExpense this.type)}}expense{{else}}income{{/if}}">
+                {{#if (isExpense this.type)}}-{{else}}+{{/if}}{{formatCurrency this.amount}}₫
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    <div class="footer">
+        © 2026 LumiFinance. Tài liệu được bảo mật cho người dùng hệ thống.
+    </div>
+</body>
+</html>
