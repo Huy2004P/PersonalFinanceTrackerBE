@@ -1,28 +1,45 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const apiRoutes = require('./routes/api');
 const swaggerUi = require('swagger-ui-express');
-const swaggerSpecs = require('./config/swagger');
-const swaggerDocument = require('./swagger.json');
-
+const swaggerDocument = require('./swagger.json'); // Load file JSON tĩnh của Huy
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
-// Phải đặt TRƯỚC app.use('/api', apiRoutes)
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); // Thêm dòng này để hỗ trợ form-data nếu cần
+// --- CẤU HÌNH SWAGGER ĐỘNG ---
+// 1. Xác định URL server dựa trên môi trường
+const SERVER_URL = process.env.RENDER_EXTERNAL_URL 
+    ? process.env.RENDER_EXTERNAL_URL 
+    : `http://localhost:${process.env.PORT || 3000}`;
 
-// Sử dụng Routes
-app.use('/api', apiRoutes);
-// Trang tài liệu API
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
+// 2. Cập nhật mảng servers trong swaggerDocument một cách tự động
+swaggerDocument.servers = [
+    {
+        url: SERVER_URL,
+        description: process.env.RENDER_EXTERNAL_URL ? 'Render Production Server' : 'Local Development Server'
+    },
+    {
+        url: "https://identitytoolkit.googleapis.com/v1",
+        description: "Firebase Auth API Server"
+    }
+];
+
+// 3. Khởi tạo giao diện Swagger với tài liệu đã được cập nhật
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: "LumiFinance API Docs"
+    customSiteTitle: "LumiFinance API Docs",
+    swaggerOptions: {
+        persistAuthorization: true,
+    }
 }));
+
+// --- ROUTES ---
+const apiRoutes = require('./routes/api');
+app.use('/api', apiRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server đang chạy tại http://localhost:${PORT}`);
+    console.log(`Server đang chạy tại: ${SERVER_URL}`);
 });
