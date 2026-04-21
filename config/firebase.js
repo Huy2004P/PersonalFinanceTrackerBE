@@ -18,13 +18,15 @@ const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
 try {
   const serviceAccount = JSON.parse(serviceAccountRaw);
   
+  // DÒNG QUAN TRỌNG NHẤT: Ép kiểu lại ký tự xuống dòng cho Private Key
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+
   if (!admin.apps.length) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
     });
-    console.log("Firebase Admin đã khởi tạo thành công!");
   }
+  console.log("Firebase đã nhận chìa khóa xịn!");
 } catch (error) {
-  console.error("Lỗi cấu hình Firebase:", error.message);
-  // Nếu lỗi ở đây, server sẽ không thể verify bất kỳ token nào -> trả về 401
+  console.error("Lỗi cấu hình Firebase:", error);
 }
