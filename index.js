@@ -4,25 +4,25 @@ const cors = require('cors');
 const apiRoutes = require('./routes/api');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./config/swagger');
-const swaggerDocument = require('./swagger.json');
-
 
 const app = express();
 app.use(cors());
-
-// Phải đặt TRƯỚC app.use('/api', apiRoutes)
 app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); // Thêm dòng này để hỗ trợ form-data nếu cần
+app.use(express.urlencoded({ extended: true }));
 
-// Sử dụng Routes
-app.use('/api', apiRoutes);
-// Trang tài liệu API
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
     customCss: '.swagger-ui .topbar { display: none }',
+    customCssUrl: CSS_URL, // Thêm dòng này để fix lỗi load CSS trên Vercel
     customSiteTitle: "LumiFinance API Docs"
 }));
+app.use('/api', apiRoutes);
+app.get('/', (req, res) => {
+    res.send('LumiFinance Backend is running!');
+});
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server đang chạy tại http://localhost:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại cổng ${PORT}`);
 });
