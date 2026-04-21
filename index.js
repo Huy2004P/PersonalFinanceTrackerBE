@@ -2,9 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const apiRoutes = require('./routes/api');
-const swaggerSpec = require('./config/swagger');
 const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./config/swagger');
 const swaggerDocument = require('./swagger.json');
+
 
 const app = express();
 app.use(cors());
@@ -16,7 +17,10 @@ app.use(express.urlencoded({ extended: true })); // Thêm dòng này để hỗ 
 // Sử dụng Routes
 app.use('/api', apiRoutes);
 // Trang tài liệu API
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: "LumiFinance API Docs"
+}));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
