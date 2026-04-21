@@ -16,8 +16,8 @@ const path = require('path');
 const serviceAccount = {
   "type": "service_account",
   "project_id": "personalfinancetracker-ec7dd",
-  "private_key_id": "c9efd07e1891c4ed0b91d22da1b8b9955b674fde",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDR4YxVOTUp/DE5\nuIeMfLkFGQofVvJ3wg70OoruZ2MiM+s1tIpBxCPr6xXk3X3UNj3q1998GOcSOAsu\nIqS28oGaUl4FXTXOetZFdDZGOP8kiDsQtLD7pcmOkf16/VLpf+bCVmnbYxhDkDqj\nSbyteF7/q5MtolzkXD3Lj8xnh5C+3YhICCbDn629DP7BeWXRyOGRpjf/wjPLdzti\nHVbF8BDVteHmXYyzw0EN+3NNygWoN38LZ9b0AURbcrvHltkEGmsULKUJDEJFJyaF\nai7VjOAUXeXzeeJpur8tjjev67TXPiuJgNCxkxaEY61p59IsxKXezUVVOyi1cu5P\nTxoeyVMTAgMBAAECggEAUu2izF3BUuiR7rOp42m4lXoSVNW/EnC8BeZH1PFG61HG\nYz8FzfyZEPOfgAHAYSRZjLxlUpxoWPuJ91265YqmiPp4qfftdbt1hJXpiA+nSKEH\nbY9nytbz8ABhPsJvi1F9NVZ9lzDtemy3rqNJCOXh63W4vrRDrfuAczlLU7DuEWux\ntTiV6M+LLq9O0L32rperf7BrBMJ69w1lwGghLSPgXRoGgIujtNqiUX31TyGrX4l/\nuQuiKWLqqrasAiz4jJXWhHK2yV/HfagyrQlG5xuEa7L7fiFG+ni6DrKMKmHCvDkY\nSpzPVuRHUl/cgyNPSrJ5nL4bx0mareBbcHpnkzQd8QKBgQDzKphK7ehthmvdG0Dj\nKnF+0lkrGPqug/oO3+LwYH9b7FKQCDoSGNZyZUkHzpnaslqHNjNbyjtqgRFOBw6C\nxYfO/LZnPb/Ab9hXnIdaCeIwo9zLCL67ddcGiVUR/CyMWWkqgPyrfpgnrVVDDJcD\nRXakeegQikMiZ6Gy8XexTn1PaQKBgQDc9Ty8jSXEcoOyFZv/6ihqg6EiZuXktE0r\nQ9aYIWTUGjsyNPTsQrLDryZbHV2ZZ9dNAYLJZDp8hbFt+yCniDrjuS0Se3uiq6Qf\nLq6nMnpRQK5uUJRoVPGvX8GTlisVVRzrkEfcSEnZ9s7/VnxzdQ25HWboCxYPEXPa\n0hz3pEb7GwKBgB5OaLyt+hHsdvUPuH6Xg52yybo9WsD1Ye0IqlgbLsReJ8wbumEX\nB2MqjHeUoEhJgk7nym7ePZmAjI+VAZH63HpHtNQZNhTd27DPqW7nXHGDerkzVdI3\nVZ1S8G9VZpf3bMwHV3ZoSL5pM/8vSoL13VuSdgHZuZRIJjcPMUO/7I5BAoGBALGj\nN0Ee+M4GgnoZhWEpD3USfej6cLh9e8zcrRmBP16F+DFVAdMvjChmF6AI68b5BM6T\n+GGQgrS5hvu0eXw2uaF6rhG91JfjBf9LuH4SxuOr7JAjmCyIngUwJqBQijKMSsPX\nKu6d70Gceq4tCcCIyo+YY7MJtqJGla3GXiN5ntchAoGALD9jqZ0tFwIo+ZdnG+Hu\nmPM68F79qjCyqjBsyTC4X37R/Wpn7u0xlgBj33kPjt0YQylQOXvDSdjwymCpzAJm\nkjXeCmfKrXJHZFOe+63CwHhmYZSzFYmKLhUlAfgKvCcqYbRvyfPGX9/9c6AaEZjn\nMqdNvvRtZ+pX1qaZY49Lrkw=\n-----END PRIVATE KEY-----\n",
+  "private_key_id": "add7ed6eb68bfd7bf53d071534e36ed14e432297",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDDvnT3l9ZCWFRI\ng/hFfCNGCsRx9+Y84epluC/fCZIcHueYh3MBDciWyfsShkVtJ5dThwUkk735dtrL\nBjzU/7S6oLYosYY1D1CQXXK2KPDDEaOUgGi2GlBSZo+DRMELLl+GeFLOq32hN2oy\nvT1OnVKIM1Iniba990Biyx/RyqOdZto01ozSmFAv29w3Qefy4527z+t8Nvcyb3fh\nnq8N2Bg6/QNlz/+wBrpAgX1THVdPwXLuwxTjIJJOEGqmP0IejgJ07ZCsxwfhGtot\n1H8hV3QiiKHi1Qi8wBqAQsymGhoZNNSSWbkK6jGP2g6iX9kpyjyvX2fZWaSxLe+v\nQtwLiIP7AgMBAAECggEALQMahacSW65RL129lUjvGZe3RdfyR3TSAHMi+wCJ61KG\nAlK/dPIU+uvWgxOCWo/8ofYODjO1P2z/8ijsizSD/Fihmuj7yi7L4W7DxrTSbKEd\nQzRmH94cM16nSNHiLG6NA/CeZi0UViLWlnVi6DWQOYbHsRTfg36cfTtlhUo6ZqLN\nk9u5JP/UbIUkR9pDnYJXX8zPTRpWRYdNCPz4ioOW8rSyeNwdm2Z9PrnY++w82mfd\nxaksJmE+Knwd3ZuF853thKCyphAod9EXINxuF19uVnf22gNf3bUwXCqcmyF7a7kl\nZYbrncH47J59ys4m5VVI6zUuggwok+nBSpl+PntvRQKBgQDs0u0iGZ0nmP1PEH9C\nwkBrGVpCxRfMZ7W5wZNT1z2UqD9Iu0HcXhk5Lf5Cyahzyot8FUvvZARljmCMAB/5\nDLj+zkSGrl4sdlfBlRsuEK46wqdtcfqFLhhfUCX7bRQ/aesWCvwrm5M0JJRxnc5x\nnpfdQIMZy8JSE3XpCPRTpi2hlwKBgQDTl/4kCV8nH12qzVC/xzn5kKD5Rt7U6KWJ\nJ8PIJD9Au8diFmLY/EL0NsCfvWg0EcgU+aOwbCM5OvBJTAJL4Oup9amRxgiZx8XB\nZUC4L92OlQjsUK06o8+1Y69gAFyfQLg7qMgZlOvxv13dEfRdxszsVJa29bjGscH1\ntS6xkol1PQKBgDxdc2Zqwv0x6Pd7TAT3QLZL6w7z8CIBGXg02FnZlm/LBv6CBMKo\nFaPWjmX1wwNo0G8bepSVmO1OAlwNOBkiXhFNAHiX/5czvyCv4hK228JMlaK3F9VU\nr4+z/Up+Plf/ppWizS5MZJQ48sGXKOUbOLiD1icAIhMLtNVmm+iqhh0XAoGAc8mt\n2dyDBG6mnCwEbx2/fPEHFcIReGLjCv4GpgQn1O2s+uETMHhCz08S85b7adr9KXU+\nfPGACPZWvVVpwEoRzAzRwSKkXDq03dLhqqkOzdKCcobndLpllHY7ZwZrqP4KkyMW\ndOFIiB7XZ31GwvZh90WGwBIRDjIB2MpQBf4RWGUCgYBolEs2mk08aIEzx/0wwKkN\nauE86A00nrW1fWLScETLFljbXRZdPEix/c+nXXaIRYuu3UPrALYoEWGcCTrIowML\nibhSlhawFbgwbb9WfIyh1ZNBXoJNMiI7Ab+/8q4QWGLazoiqo9WgyV+LlU2Ny58W\ngRAof3A1XYJGjO3ZcMK9TA==\n-----END PRIVATE KEY-----\n",
   "client_email": "firebase-adminsdk-fbsvc@personalfinancetracker-ec7dd.iam.gserviceaccount.com",
   "client_id": "110346361762452112362",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -27,14 +27,19 @@ const serviceAccount = {
   "universe_domain": "googleapis.com"
 };
 
-
 if (!admin.apps.length) {
   try {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
     });
-    console.log("Firebase Admin: Đã kết nối bằng file JSON vật lý thành công!");
+    console.log("Firebase Admin: Đã kết nối thành công!");
   } catch (error) {
     console.error("Lỗi khởi tạo Firebase:", error.message);
   }
 }
+
+// QUAN TRỌNG NHẤT: Huy phải thêm 3 dòng này ở cuối file
+const db = admin.firestore();
+const auth = admin.auth();
+
+module.exports = { admin, db, auth };
