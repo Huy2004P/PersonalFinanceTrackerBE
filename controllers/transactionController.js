@@ -127,8 +127,9 @@ exports.getTransactions = async (req, res) => {
     }
 };
 
-// 4. HÀM XUẤT BÁO CÁO PDF (Dùng HTML Template + Puppeteer)
+// 4. HÀM XUẤT BÁO CÁO PDF (Tối ưu cho Local & Render)
 exports.exportPDF = async (req, res) => {
+    let browser; // Khai báo ở ngoài để đóng browser trong block 'finally'
     try {
         const uid = req.user.uid;
 
@@ -140,7 +141,6 @@ exports.exportPDF = async (req, res) => {
 
         const transactions = snapshot.docs.map(doc => {
             const data = doc.data();
-            // Format ngày tháng cho đẹp trước khi đưa vào HTML
             const dateObj = data.createdAt ? data.createdAt.toDate() : new Date();
             return {
                 ...data,
@@ -148,12 +148,11 @@ exports.exportPDF = async (req, res) => {
             };
         });
 
-        // Tính tổng chi tiêu
         const totalExpense = transactions
             .filter(t => t.type === 'EXPENSE' || t.kind === 'EXPENSE')
             .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
 
-        // B. Đọc và biên dịch HTML Template với Handlebars
+        // B. Đọc và biên dịch HTML Template
         const templatePath = path.join(__dirname, '../templates/report.html');
         if (!fs.existsSync(templatePath)) {
             return res.status(500).json({ error: "Không tìm thấy file template HTML" });
@@ -169,19 +168,34 @@ exports.exportPDF = async (req, res) => {
             totalExpense: totalExpense.toLocaleString('vi-VN')
         });
 
-        const browser = await puppeteer.launch({ headless: "new", args: ['--no-sandbox'] });
+        // --- BẮT ĐẦU CẤU HÌNH PUPPETEER TỐI ƯU ---
+        browser = await puppeteer.launch({
+            headless: "new",
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage', // Cực kỳ quan trọng cho RAM 512MB trên Render
+                '--single-process',         // Tiết kiệm tài nguyên trên môi trường Linux
+                '--no-zygote'
+            ],
+            // Tự động tìm đường dẫn Chrome nếu đã cài qua build command trên Render
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null, 
+        });
+
         const page = await browser.newPage();
 
-        // BƯỚC QUAN TRỌNG: Thiết lập khung hình giả lập điện thoại
         await page.setViewport({
             width: 375,
             height: 667,
             deviceScaleFactor: 2,
         });
 
-        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+        // Đặt nội dung và đợi cho đến khi các tài nguyên (ảnh, font) tải xong
+        await page.setContent(htmlContent, { 
+            waitUntil: 'networkidle0', 
+            timeout: 30000 
+        });
 
-        // BƯỚC QUAN TRỌNG: Xuất PDF theo chiều ngang đã định
         const pdfBuffer = await page.pdf({
             width: '375px',
             printBackground: true,
@@ -189,11 +203,19 @@ exports.exportPDF = async (req, res) => {
             margin: { top: 0, bottom: 0, left: 0, right: 0 }
         });
 
-        await browser.close();
+        // Gửi file về cho Flutter
+        res.contentType("application/pdf");
         res.send(pdfBuffer);
+
     } catch (e) {
         console.error("LỖI XUẤT PDF:", e.message);
-        res.status(500).json({ error: e.message });
+        res.status(500).json({ error: "Lỗi hệ thống khi tạo báo cáo PDF" });
+    } finally {
+        // LUÔN LUÔN đóng browser để giải phóng RAM cho Render
+        if (browser) {
+            await browser.close();
+            console.log("Đã đóng trình duyệt Puppeteer để giải phóng bộ nhớ.");
+        }
     }
 };
 
