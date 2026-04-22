@@ -171,15 +171,15 @@ exports.exportPDF = async (req, res) => {
         // --- BẮT ĐẦU CẤU HÌNH PUPPETEER TỐI ƯU ---
         browser = await puppeteer.launch({
             headless: "new",
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || 
+                            '/opt/render/.cache/puppeteer/chrome/linux-122.0.6261.94/chrome-linux/chrome', 
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage', // Cực kỳ quan trọng cho RAM 512MB trên Render
-                '--single-process',         // Tiết kiệm tài nguyên trên môi trường Linux
+                '--disable-dev-shm-usage',
+                '--single-process',
                 '--no-zygote'
             ],
-            // Tự động tìm đường dẫn Chrome nếu đã cài qua build command trên Render
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null, 
         });
 
         const page = await browser.newPage();
