@@ -9,12 +9,10 @@ app.use(cors());
 app.use(express.json());
 
 // --- CẤU HÌNH SWAGGER ĐỘNG ---
-// 1. Xác định URL server dựa trên môi trường
 const SERVER_URL = process.env.RENDER_EXTERNAL_URL 
     ? process.env.RENDER_EXTERNAL_URL 
     : `http://localhost:${process.env.PORT || 3000}`;
 
-// 2. Cập nhật mảng servers trong swaggerDocument một cách tự động
 swaggerDocument.servers = [
     {
         url: SERVER_URL,
@@ -26,7 +24,6 @@ swaggerDocument.servers = [
     }
 ];
 
-// 3. Khởi tạo giao diện Swagger với tài liệu đã được cập nhật
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: "LumiFinance API Docs",
