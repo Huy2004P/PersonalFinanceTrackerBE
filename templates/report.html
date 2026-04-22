@@ -1,164 +1,126 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* SỬ DỤNG MÀU SẮC TỪ apple_design.dart */
-        :root {
-            --pure-white: #FFFFFF;
-            --light-gray: #F5F5F7;
-            --near-black: #1D1D1F;
-            --apple-blue: #0071E3;
-            --bright-blue: #0066CC;
-            --system-red: #FF3B30;
-            --system-green: #34C759;
-        }
+    /* 1. XÓA LỀ TRANG ĐỂ NỘI DUNG TRÀN VIỀN */
+    @page { 
+        size: auto; 
+        margin: 0; /* Ép lề bằng 0 để không còn khoảng trắng 2 bên */
+    }
+    
+    body { 
+        font-family: "DejaVu Sans", sans-serif; 
+        color: #333; 
+        line-height: 1.4; 
+        margin: 0; 
+        padding: 0; 
+        width: 100%; /* Đảm bảo body chiếm hết chiều ngang */
+    }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--light-gray); /* */
-            color: var(--near-black); /* */
-            padding: 24px;
-            margin: 0;
-            line-height: 1.5;
-        }
+    .invoice-box { 
+        width: 100%; 
+        padding: 20px; /* Chỉ để lề nhỏ cho đẹp mắt */
+        box-sizing: border-box;
+    }
+        
+        /* Header: Logo & Invoice Info */
+        .header-table { width: 100%; border-bottom: 2px solid #0071E3; padding-bottom: 20px; margin-bottom: 30px; }
+        .brand { font-size: 28px; font-weight: bold; color: #0071E3; }
+        .invoice-details { text-align: right; font-size: 12px; color: #666; }
 
-        /* HEADER STYLE */
-        .header {
-            margin-bottom: 30px;
-            padding-top: 20px;
-        }
-        .brand {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--bright-blue);
-            letter-spacing: -1px;
-            margin-bottom: 4px;
-        }
-        .report-type {
-            font-size: 14px;
-            color: #86868b;
-            font-weight: 500;
-        }
+        /* User Info Section */
+        .info-section { width: 100%; margin-bottom: 30px; }
+        .info-col { width: 50%; vertical-align: top; font-size: 13px; }
+        .info-label { color: #888; text-transform: uppercase; font-size: 10px; font-weight: bold; }
 
-        /* CARD TỔNG KẾT (Style giống Balance Card trong Home) */
-        .hero-card {
-            background: linear-gradient(135deg, #1459B3 0%, #1C7AD6 100%);
-            border-radius: 28px;
-            padding: 28px;
-            color: var(--pure-white);
-            box-shadow: 0 12px 24px rgba(20, 89, 179, 0.2);
-            margin-bottom: 32px;
-        }
-        .hero-label {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.8);
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        .hero-value {
-            font-size: 36px; /* Sấp sỉ displayHero */
-            font-weight: 700;
-            margin-top: 8px;
-            letter-spacing: -1px;
-        }
-        .hero-footer {
-            margin-top: 24px;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-            padding-top: 16px;
-        }
+        /* Statistics Summary */
+        .stats-grid { display: flex; justify-content: space-between; margin-bottom: 30px; gap: 10px; }
+        .stat-card { flex: 1; padding: 15px; border-radius: 10px; background: #f8f9fa; border: 1px solid #eee; }
+        .stat-val { font-size: 16px; font-weight: bold; margin-top: 5px; }
 
-        /* SECTION TITLE */
-        .section-title {
-            font-size: 19px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            padding-left: 4px;
-        }
+        /* Main Transaction Table */
+        table.items-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        table.items-table th { background: #f0f4f8; padding: 12px; text-align: left; font-size: 11px; border-bottom: 1px solid #ddd; }
+        table.items-table td { padding: 12px; font-size: 11px; border-bottom: 1px solid #eee; }
+        .amt-pos { color: #34C759; font-weight: bold; }
+        .amt-neg { color: #FF3B30; font-weight: bold; }
 
-        /* TRANSACTION LIST (Dạng thẻ Mobile) */
-        .transaction-item {
-            background-color: var(--pure-white); /* */
-            border-radius: 20px;
-            padding: 16px 20px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-        }
-        .trans-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .trans-category {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .trans-date-note {
-            font-size: 13px;
-            color: #86868b;
-        }
-        .trans-amount {
-            font-size: 17px; /* body style */
-            font-weight: 700;
-            text-align: right;
-        }
-
-        /* MÀU SẮC TRẠNG THÁI */
-        .expense { color: var(--system-red); }
-        .income { color: var(--system-green); }
-
-        .footer { 
-            margin-top: 40px; 
-            text-align: center; 
-            font-size: 12px; 
-            color: #86868b; 
-            padding-bottom: 30px;
-        }
+        .footer { text-align: center; font-size: 10px; color: #aaa; margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="brand">LumiFinance</div>
-        <div class="report-type">BÁO CÁO GIAO DỊCH CHI TIẾT</div>
-    </div>
+    <div class="invoice-box">
+        <table class="header-table">
+            <tr>
+                <td class="brand">LumiFinance</td>
+                <td class="invoice-details">
+                    Mã báo cáo: <b>{{reportId}}</b><br>
+                    Ngày xuất: {{exportDate}}
+                </td>
+            </tr>
+        </table>
 
-    <div class="hero-card">
-        <div class="hero-label">Tổng chi tiêu tháng này</div>
-        <div class="hero-value">{{totalExpense}}₫</div>
-        <div class="hero-footer">
-            <span>Khách hàng: {{userName}}</span>
-            <span>{{exportDate}}</span>
-        </div>
-    </div>
+        <table class="info-section">
+            <tr>
+                <td class="info-col">
+                    <div class="info-label">Thông tin khách hàng</div>
+                    <b>{{name}}</b><br>
+                    {{email}}<br>
+                    {{phone}}
+                </td>
+                <td class="info-col" style="text-align: right;">
+                    <div class="info-label">Địa chỉ</div>
+                    {{address}}
+                </td>
+            </tr>
+        </table>
 
-    <div class="section-title">Lịch sử giao dịch</div>
-
-    <div class="transactions-container">
-        {{#each transactions}}
-        <div class="transaction-item">
-            <div class="trans-info">
-                <div class="trans-category">{{this.categoryName}}</div>
-                <div class="trans-date-note">
-                    {{this.formattedDate}} • {{#if this.note}}{{this.note}}{{else}}Không có ghi chú{{/if}}
-                </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="info-label">Tổng Thu</div>
+                <div class="stat-val" style="color: #34C759;">+{{totalIncome}}₫</div>
             </div>
-            <div class="trans-amount {{#if (isExpense this.type)}}expense{{else}}income{{/if}}">
-                {{#if (isExpense this.type)}}-{{else}}+{{/if}}{{formatCurrency this.amount}}₫
+            <div class="stat-card">
+                <div class="info-label">Tổng Chi</div>
+                <div class="stat-val" style="color: #FF3B30;">-{{totalExpense}}₫</div>
+            </div>
+            <div class="stat-card" style="background: #eef6ff;">
+                <div class="info-label">Số dư kỳ này</div>
+                <div class="stat-val" style="color: #0071E3;">{{balance}}₫</div>
             </div>
         </div>
-        {{/each}}
-    </div>
 
-    <div class="footer">
-        © 2026 LumiFinance. Tài liệu được bảo mật cho người dùng hệ thống.
+        <div class="info-label" style="margin-bottom: 10px;">Chi tiết giao dịch ({{count}} mục)</div>
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Ngày</th>
+                    <th>Danh mục / Ví</th>
+                    <th>Ghi chú</th>
+                    <th style="text-align: right;">Số tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each transactions}}
+                <tr>
+                    <td>{{this.stt}}</td>
+                    <td>{{this.date}}</td>
+                    <td><b>{{this.category}}</b><br><small>{{this.wallet}}</small></td>
+                    <td style="color: #666;">{{this.note}}</td>
+                    <td style="text-align: right;" class="{{#if (isExpense this.type)}}amt-neg{{else}}amt-pos{{/if}}">
+                        {{#if (isExpense this.type)}}-{{else}}+{{/if}}{{this.amount}}₫
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        <div class="footer">
+            Báo cáo này được tạo tự động bởi hệ thống LumiFinance.<br>
+            Sinh viên thực hiện: <b>Văn Bá Phát Huy - Nguyễn Trần Minh Tường</b> - Đồ án Điện Toán Đám Mây - AGU.
+        </div>
     </div>
 </body>
 </html>

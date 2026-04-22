@@ -127,94 +127,67 @@ exports.getTransactions = async (req, res) => {
     }
 };
 
-// 4. HÀM XUẤT BÁO CÁO PDF (Tối ưu cho Local & Render)
+// export_controller.js
 exports.exportPDF = async (req, res) => {
-    let browser; // Khai báo ở ngoài để đóng browser trong block 'finally'
     try {
         const uid = req.user.uid;
 
-        // A. Lấy dữ liệu giao dịch từ Firestore
+        // 1. LẤY TOÀN BỘ THÔNG TIN USER TỪ FIRESTORE
+        const userDoc = await db.collection('users').doc(uid).get();
+        const u = userDoc.exists ? userDoc.data() : {};
+        
+        // Map các trường dữ liệu theo userController.js
+        const userInfo = {
+            name: u.fullName || u.displayName || u.name || "Khách hàng LumiFinance",
+            email: u.email || req.user.email || "Chưa cập nhật",
+            phone: u.phoneNumber || u.phone || "N/A",
+            address: u.address || "Việt Nam",
+            createdAt: u.createdAt ? u.createdAt.toDate().toLocaleDateString('vi-VN') : 'N/A'
+        };
+
+        // 2. LẤY GIAO DỊCH & TÍNH TOÁN (Giữ nguyên logic tính toán của Huy)
         const snapshot = await db.collection('transactions')
             .where('uid', '==', uid)
-            .orderBy('createdAt', 'desc')
-            .get();
+            .orderBy('createdAt', 'desc').get();
 
-        const transactions = snapshot.docs.map(doc => {
-            const data = doc.data();
-            const dateObj = data.createdAt ? data.createdAt.toDate() : new Date();
+        let income = 0, expense = 0;
+        const transactions = snapshot.docs.map((doc, index) => {
+            const d = doc.data();
+            const amt = Number(d.amount) || 0;
+            if (d.type === 'INCOME') income += amt; 
+            else if (d.type === 'EXPENSE') expense += amt;
+
             return {
-                ...data,
-                formattedDate: dateObj.toLocaleDateString('vi-VN'),
+                stt: index + 1,
+                date: d.createdAt ? d.createdAt.toDate().toLocaleDateString('vi-VN') : 'N/A',
+                category: d.categoryName || d.category || "Giao dịch",
+                wallet: d.walletName || "Ví",
+                note: d.note || "-",
+                type: d.type,
+                amount: amt.toLocaleString('vi-VN')
             };
         });
 
-        const totalExpense = transactions
-            .filter(t => t.type === 'EXPENSE' || t.kind === 'EXPENSE')
-            .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-
-        // B. Đọc và biên dịch HTML Template
+        // 3. ĐỔ VÀO TEMPLATE
         const templatePath = path.join(__dirname, '../templates/report.html');
-        if (!fs.existsSync(templatePath)) {
-            return res.status(500).json({ error: "Không tìm thấy file template HTML" });
-        }
-        
         const source = fs.readFileSync(templatePath, 'utf8');
         const template = handlebars.compile(source);
 
         const htmlContent = template({
-            userName: req.user.displayName || "Người dùng LumiFinance",
+            ...userInfo,
+            reportId: `LF-${Date.now().toString().slice(-6)}`,
             exportDate: new Date().toLocaleDateString('vi-VN'),
-            transactions: transactions,
-            totalExpense: totalExpense.toLocaleString('vi-VN')
+            totalIncome: income.toLocaleString('vi-VN'),
+            totalExpense: expense.toLocaleString('vi-VN'),
+            balance: (income - expense).toLocaleString('vi-VN'),
+            count: transactions.length,
+            transactions: transactions
         });
 
-        // --- BẮT ĐẦU CẤU HÌNH PUPPETEER TỐI ƯU ---
-        browser = await puppeteer.launch({
-            headless: "new",
-            executablePath: puppeteer.executablePath(), 
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--single-process',
-                '--no-zygote'
-            ],
-        });
-
-        const page = await browser.newPage();
-
-        await page.setViewport({
-            width: 375,
-            height: 667,
-            deviceScaleFactor: 2,
-        });
-
-        // Đặt nội dung và đợi cho đến khi các tài nguyên (ảnh, font) tải xong
-        await page.setContent(htmlContent, { 
-            waitUntil: 'networkidle0', 
-            timeout: 30000 
-        });
-
-        const pdfBuffer = await page.pdf({
-            width: '375px',
-            printBackground: true,
-            displayHeaderFooter: false,
-            margin: { top: 0, bottom: 0, left: 0, right: 0 }
-        });
-
-        // Gửi file về cho Flutter
-        res.contentType("application/pdf");
-        res.send(pdfBuffer);
-
+        res.header("Content-Type", "text/html");
+        res.send(htmlContent);
     } catch (e) {
-        console.error("LỖI XUẤT PDF:", e.message);
-        res.status(500).json({ error: "Lỗi hệ thống khi tạo báo cáo PDF" });
-    } finally {
-        // LUÔN LUÔN đóng browser để giải phóng RAM cho Render
-        if (browser) {
-            await browser.close();
-            console.log("Đã đóng trình duyệt Puppeteer để giải phóng bộ nhớ.");
-        }
+        res.status(500).json({ error: e.message });
     }
 };
 
