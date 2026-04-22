@@ -171,8 +171,7 @@ exports.exportPDF = async (req, res) => {
         // --- BẮT ĐẦU CẤU HÌNH PUPPETEER TỐI ƯU ---
         browser = await puppeteer.launch({
             headless: "new",
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || 
-                            '/opt/render/.cache/puppeteer/chrome/linux-122.0.6261.94/chrome-linux/chrome', 
+            executablePath: puppeteer.executablePath(), 
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
