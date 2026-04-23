@@ -88,41 +88,57 @@ exports.createTransaction = async (req, res) => {
     }
 };
 
-// 3. Lấy danh sách giao dịch (Hỗ trợ phân trang)
+// 3. Lấy danh sách giao dịch (Hỗ trợ phân trang & TÌM KIẾM)
 exports.getTransactions = async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 15;
         const lastDocId = req.query.lastDocId;
         const type = req.query.type;
+        const search = req.query.search; // LẤY THAM SỐ TÌM KIẾM TỪ APP
 
         let query = db.collection('transactions').where('uid', '==', req.user.uid);
 
+        // Lọc theo loại Thu/Chi
         if (type && type.toUpperCase() !== 'ALL') {
             query = query.where('type', '==', type.toUpperCase());
         }
 
+        // Sắp xếp mới nhất lên đầu
         query = query.orderBy('createdAt', 'desc');
 
-        if (lastDocId && lastDocId !== 'null' && lastDocId !== '') {
+        // Logic phân trang (Chỉ chạy khi KHÔNG có tìm kiếm để tối ưu hiệu năng)
+        if (!search && lastDocId && lastDocId !== 'null' && lastDocId !== '') {
             const lastDoc = await db.collection('transactions').doc(lastDocId).get();
             if (lastDoc.exists) {
                 query = query.startAfter(lastDoc);
             }
         }
 
-        query = query.limit(limit);
-
+        // Thực hiện lấy dữ liệu
         const snapshot = await query.get();
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        let data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // --- CHIÊU QUYẾT ĐỊNH: LỌC DỮ LIỆU THEO TỪ KHÓA ---
+        if (search) {
+            const keyword = search.toLowerCase();
+            data = data.filter(item => {
+                const noteMatch = item.note && item.note.toLowerCase().includes(keyword);
+                const categoryMatch = item.categoryName && item.categoryName.toLowerCase().includes(keyword);
+                return noteMatch || categoryMatch;
+            });
+        }
+
+        // Nếu tìm kiếm, ta cắt mảng theo limit thủ công
+        const finalData = search ? data.slice(0, limit) : data;
 
         res.json({
             status: 'success',
-            results: data.length,
-            lastDocId: data.length > 0 ? data[data.length - 1].id : null,
-            data: data
+            results: finalData.length,
+            lastDocId: finalData.length > 0 ? finalData[finalData.length - 1].id : null,
+            data: finalData
         });
     } catch (e) {
-        console.error("LỖI GET TRANSACTIONS:", e.message); 
+        console.error("❌ LỖI GET TRANSACTIONS:", e.message); 
         res.status(500).json({ error: e.message });
     }
 };
